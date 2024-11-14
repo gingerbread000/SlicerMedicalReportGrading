@@ -4,6 +4,8 @@
 
 This 3D Slicer plugin is designed to assist in reading images and corresponding reports, and providing options to rate the reports within the 3D Slicer platform.
 
+![1731565938190](image/Readme/1731565938190.png)
+
 ## Features
 
 Load medical images directly into 3D Slicer
