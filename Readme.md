@@ -13,6 +13,10 @@ Display associated reports side by side with the images
 Ability to provide ratings and feedback on the reports
 User-friendly interface for easy navigation and interaction
 
+## Usage
+
+serach showImageReports module and select it. Then click push button and select a nii gz file. A reports json file should in the file path of nii.gz file. The reports file examples show in examples/reports.json.
+
 Longkey G (gingerbread000@163.com)License
 
 This plugin is released under the MIT License
