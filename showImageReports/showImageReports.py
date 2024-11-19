@@ -136,6 +136,7 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         self.logic = None
         self._parameterNode = None
         self._parameterNodeGuiTag = None
+        self.save_score_path = None
 
     def setup(self) -> None:
         """
@@ -255,6 +256,7 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         """选择文件路径并加载影像"""
         file_path = qt.QFileDialog.getOpenFileName(None, "Select NIfTI File", "", "NIfTI Files (*.nii *.nii.gz)")
         print(file_path)
+        self.save_score_path = os.path.dirname(file_path)
         self.save_res_path = file_path
         if file_path:
             self.loadImage(file_path)
@@ -269,9 +271,9 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 print(f"Volume {file_path} loaded successfully.")
                 with open(f"{os.path.dirname(file_path)}/reports.json", "r") as f:
                     reports = json.load(f)
-                self.ui.textBrowser.setText("gt"+ reports["gt"])
-                self.ui.textBrowser_2.setText("minimed"+ reports["minimed"])
-                self.ui.textBrowser_3.setText("gpt"+ reports["gpt"])
+                self.ui.textBrowser.setText("gt:"+ reports["gt"])
+                self.ui.textBrowser_2.setText("minimed:"+ reports["minimed"])
+                self.ui.textBrowser_3.setText("gpt4:"+ reports["gpt"])
                 self.ui.textBrowser_4.setText("radfm: " + reports["radfm"])
                 self.ui.textBrowser_5.setText("brainfound :" + reports["brainfound"])
             else:
@@ -288,11 +290,21 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Run processing when user clicks "Apply" button.
         """
         """选择文件路径并加载影像"""
-        acc1 = self.ui.comboBox.currentText
-        human1 = self.ui.comboBox_2.currentText
-        text_input = self.ui.textEdit.toPlainText()
-        text_input1 = self.ui.textEdit_2.toPlainText()
-        print(acc1, human1, text_input, text_input1)
+        tmp = {"gt":0, "fp":0, "fn":0, "pos":0, "bian":0, "midu":0}
+        key = ["mini", "gpt4", "radfm", "bf"]
+        res ={k:tmp for k in key}
+        for key in res:
+            for item in res[key]:
+                attr = getattr(self.ui, f"{key}_{item}")
+                if hasattr(attr, "currentText"):
+                    res[key][item] = attr.currentText
+                elif hasattr(attr, "toPlainText"):
+                    res[key][item] = attr.toPlainText()
+        print(res)
+        if self.save_score_path != None:
+            with open(os.path.join(self.save_score_path, "human.json"), "w") as f:
+                json.dump(res, f, indent=2, ensure_ascii=False)
+
 #
 # showImageReportsLogic
 #
