@@ -271,11 +271,11 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 print(f"Volume {file_path} loaded successfully.")
                 with open(f"{os.path.dirname(file_path)}/reports.json", "r") as f:
                     reports = json.load(f)
-                self.ui.textBrowser.setText("gt:"+ reports["gt"])
-                self.ui.textBrowser_2.setText("minimed:"+ reports["minimed"])
-                self.ui.textBrowser_3.setText("gpt4:"+ reports["gpt"])
-                self.ui.textBrowser_4.setText("radfm: " + reports["radfm"])
-                self.ui.textBrowser_5.setText("brainfound :" + reports["brainfound"])
+                self.ui.textBrowser.setText("gt:"+ reports["gt"].split("：")[-1])
+                self.ui.textBrowser_2.setText("M1:"+ reports["minimed"])
+                self.ui.textBrowser_3.setText("M2:"+ reports["gpt"])
+                self.ui.textBrowser_4.setText("M3: " + reports["radfm"])
+                self.ui.textBrowser_5.setText("M4 :" + reports["brainfound:"].split("：")[-1])
             else:
                 print(f"Failed to load volume: {file_path}")
             
@@ -290,7 +290,7 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         Run processing when user clicks "Apply" button.
         """
         """选择文件路径并加载影像"""
-        tmp = {"gt":0, "fp":0, "fn":0, "pos":0, "bian":0, "midu":0}
+        tmp = {"gt":0, "fp":0, "xing":0, "pos":0, "bian":0, "midu":0}
         key = ["mini", "gpt4", "radfm", "bf"]
         res ={k:tmp for k in key}
         for key in res:
@@ -300,7 +300,7 @@ class showImageReportsWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                     res[key][item] = attr.currentText
                 elif hasattr(attr, "toPlainText"):
                     res[key][item] = attr.toPlainText()
-        print(res)
+        print(res, self.save_score_path)
         if self.save_score_path != None:
             with open(os.path.join(self.save_score_path, "human.json"), "w") as f:
                 json.dump(res, f, indent=2, ensure_ascii=False)
